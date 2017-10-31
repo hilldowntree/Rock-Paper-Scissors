@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Rock, Paper, Scissors</title>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- Simple site so putting styles and javascript in index. Not the best practise when developing something more complex -->
+
+	<style>
+
+		.hidden {
+			display:none;
+		}
+
+		.winner {
+			color:green;
+		}
+
+		.loser {
+			color:red;
+		}
+
+		.tie {
+			color:purple;
+		}
+
+		h1 {
+			text-align: center;
+		}
+
+		.game {
+			display:flex;
+			justify-content: space-around;
+		}
+
+		.playersChoice, .computerChoice {
+			float:left;
+		}
+
+		.fa {
+			font-size: 300px;
+		}
+
+		.options {
+			display:flex;
+			justify-content: space-around;
+		}
+
+		button {
+			padding:10px;
+			font-size:20px;
+			border:2px solid black;
+			width:200px;
+			margin-top: 75px;
+			margin-bottom:75px;
+		}
+
+		button:hover {
+			background-color:green;
+		}
+
+		.scoretable {
+			width:500px;
+			margin-left:50px;
+		}
+
+		.score {
+			display: flex;
+			justify-content: space-around;
+			border:1px solid black;
+			text-align: center;
+		}
+
+	</style>
+
+</head>
+<body>
+	
+	<h1>Rock, Paper, Scissors Game</h1>
+	
+	<div class="game">
+		<div class="playersChoice">
+			<i class="fa fa-hand-rock-o hidden" id="pRock" aria-hidden="true"></i>
+			<i class="fa fa-hand-paper-o hidden" id="pPaper" aria-hidden="true"></i>
+			<i class="fa fa-hand-scissors-o hidden" id="pScissors" aria-hidden="true"></i>
+		</div>
+		<div class="computerChoice">
+			<i class="fa fa-hand-rock-o hidden" id="cRock"aria-hidden="true"></i>
+			<i class="fa fa-hand-paper-o hidden" id="cPaper" aria-hidden="true"></i>
+			<i class="fa fa-hand-scissors-o hidden" id="cScissors" aria-hidden="true"></i>
+		</div>
+	</div>
+
+	<div class="options">
+		<button id="rock" value="rock">Rock</button>
+		<button id="paper" value="paper">Paper</button>
+		<button id="scissors" value="scissors">Scissors</button>
+	</div>
+
+	<div class='scoretable'>
+		<div class="score">
+			<div class="won">
+				<p>Games Won</p>
+				<p id="won"></p>
+			</div>
+			<div class="lost">
+				<p>Games Lost</p>
+				<p id="lost"></p>
+			</div>
+			<div class="tied">
+				<p>Games Tied</p>
+				<p id="tied"></p>
+			</div>
+		</div>
+	</div>
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<script>
+
+$(function(){ 
+
+	var player = ''
+	var computer = {
+		options: ['rock','paper','scissors'],
+		choice: function() {
+			return computer.options[Math.floor(Math.random() * 3)]
+		}
+	}
+	var computersMove = ''
+	var gamesTied = 0;
+	var gamesWon = 0;
+	var gamesLost = 0;
+
+	var $playersChoice = $('.playersChoice i');
+	var $computerChoice = $('.computerChoice i');
+	var $i = $('i');
+	var $playerRock = $('.playersChoice i#pRock');
+	var $playerPaper = $('.playersChoice i#pPaper');
+	var $playerScissors = $('.playersChoice i#pScissors');
+	var $computerRock = $('.computerChoice i#cRock');
+	var $computerPaper = $('.computerChoice i#cPaper');
+	var $computerScissors = $('.computerChoice i#cScissors');
+
+	var playGame = function () {
+		computersMove = computer.choice()
+
+		if (player === computersMove) {
+			gamesTied++;
+			$('p#tied').text(gamesTied);
+			$i.addClass('tie');
+			$i.removeClass('winner');
+			$i.removeClass('loser');
+		}
+		else if ((player === 'rock' & computersMove === 'scissors') || (player === 'paper' && computersMove === 'rock') || (player === 'scissors' && computersMove === 'paper')) {
+			gamesWon++;
+			$('p#won').text(gamesWon);
+			$playersChoice.addClass('winner');
+			$playersChoice.removeClass('loser');
+			$playersChoice.removeClass('tie');
+			$computerChoice.addClass('loser');
+			$computerChoice.removeClass('winner');
+			$computerChoice.removeClass('tie');
+		}
+		else {
+			gamesLost++;
+			$('p#lost').text(gamesLost);
+			$playersChoice.addClass('loser');
+			$playersChoice.removeClass('winner');
+			$playersChoice.removeClass('tie');
+			$computerChoice.addClass('winner');
+			$computerChoice.removeClass('tie');
+			$computerChoice.removeClass('loser');
+		}
+	}
+
+	var displayRPS = function () {
+		if (player === 'rock') {
+			$playerRock.removeClass('hidden')
+			$playerPaper.addClass('hidden')
+			$playerScissors.addClass('hidden')
+		}
+		else if(player === 'paper') {
+			$playerPaper.removeClass('hidden')
+			$playerRock.addClass('hidden')
+			$playerScissors.addClass('hidden')
+		}
+		else {
+			$playerScissors.removeClass('hidden');
+			$playerRock.addClass('hidden');
+			$playerPaper.addClass('hidden')
+		}
+
+		if (computersMove === 'rock') {
+			$computerRock.removeClass('hidden')
+			$computerPaper.addClass('hidden')
+			$computerScissors.addClass('hidden')
+		}
+		else if(computersMove === 'paper') {
+			$computerPaper.removeClass('hidden')
+			$computerRock.addClass('hidden')
+			$computerScissors.addClass('hidden')
+		}
+		else {
+			$computerScissors.removeClass('hidden');
+			$computerRock.addClass('hidden');
+			$computerPaper.addClass('hidden')
+		}
+
+	}
+
+	$('button').on('click', function(){
+		player = $(this).val();
+		playGame();
+		displayRPS();
+	})
+
+
+
+
+});
+
+
+</script>	
+</body>
+</html>
